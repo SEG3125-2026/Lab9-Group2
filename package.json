@@ -11,7 +11,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "db:shell": "sqlite3 data/spotshare.db",
-    "db:users": "sqlite3 data/spotshare.db \"SELECT user_id, first_name, last_name, email, role, created_at FROM users;\""
+    "db:users": "sqlite3 data/spotshare.db \"SELECT user_id, first_name, last_name, email, role, created_at FROM users;\"",
+    "db:reset-listings-only": "node db/resetListingsOnly.mjs"
   },
   "dependencies": {
     "better-sqlite3": "^11.7.0",

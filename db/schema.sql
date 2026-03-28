@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS parking_listings (
   listing_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  host_id INTEGER NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
+  host_id INTEGER REFERENCES users (user_id) ON DELETE SET NULL,
   title TEXT NOT NULL,
   description TEXT,
   address TEXT NOT NULL,

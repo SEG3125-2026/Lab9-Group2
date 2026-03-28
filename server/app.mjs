@@ -97,9 +97,15 @@ export function createSpotShareApi() {
       walking_distance_min,
       rules,
     } = req.body || {}
-    const hid = Number(hostId)
-    if (!Number.isFinite(hid) || hid < 1) {
-      return res.status(400).json({ error: 'hostId is required.' })
+    let hid = null
+    if (hostId !== undefined && hostId !== null && String(hostId).trim() !== '') {
+      const n = Number(hostId)
+      if (!Number.isFinite(n) || n < 1) {
+        return res.status(400).json({ error: 'Invalid hostId.' })
+      }
+      const user = db.prepare('SELECT user_id FROM users WHERE user_id = ?').get(n)
+      if (!user) return res.status(404).json({ error: 'User not found.' })
+      hid = n
     }
     if (!title?.trim() || !address?.trim() || !city?.trim() || !postal_code?.trim()) {
       return res.status(400).json({ error: 'Title, address, city, and postal code are required.' })
@@ -114,8 +120,6 @@ export function createSpotShareApi() {
       if (Number.isFinite(w) && w >= 0) walk = Math.round(w)
     }
     try {
-      const user = db.prepare('SELECT user_id FROM users WHERE user_id = ?').get(hid)
-      if (!user) return res.status(404).json({ error: 'User not found.' })
       const r = db
         .prepare(
           `INSERT INTO parking_listings (
