@@ -14,9 +14,9 @@ export default function ConfirmationPage({ nav, selectedListing, locale, setLoca
       <div style={{ minHeight: '100vh', background: '#f9fafb' }}>
         <Navbar nav={nav} locale={locale} setLocale={setLocale} t={t} currentUser={currentUser} logout={logout} />
         <div style={{ maxWidth: 600, margin: '0 auto', padding: '48px 24px', textAlign: 'center' }}>
-          <p style={{ color: '#6b7280' }}>No booking to show.</p>
+          <p style={{ color: '#6b7280' }}>{t('confirmNoBooking')}</p>
           <Btn onClick={() => nav('search')} style={{ marginTop: 16 }}>
-            Find parking
+            {t('findParking')}
           </Btn>
         </div>
       </div>
@@ -58,11 +58,9 @@ export default function ConfirmationPage({ nav, selectedListing, locale, setLoca
             marginBottom: 8,
           }}
         >
-          You're All Set!
+          {t('yourAllSet')}
         </h1>
-        <p style={{ color: '#6b7280', marginBottom: 36 }}>
-          Your parking spot has been reserved. Get ready for a stress-free commute.
-        </p>
+        <p style={{ color: '#6b7280', marginBottom: 36 }}>{t('reservationSuccess')}</p>
 
         {/* Booking ID card */}
         <div
@@ -92,7 +90,7 @@ export default function ConfirmationPage({ nav, selectedListing, locale, setLoca
                   marginBottom: 4,
                 }}
               >
-                Booking Confirmed
+                {t('confirmBookingConfirmed')}
               </p>
               <p style={{ fontSize: 24, fontWeight: 800, color: 'white' }}>#{b.id}</p>
             </div>
@@ -128,7 +126,7 @@ export default function ConfirmationPage({ nav, selectedListing, locale, setLoca
               {l.hostAvatar}
             </div>
             <div>
-              <p style={{ fontSize: 11, color: '#a7f3d0' }}>SpotShare Host</p>
+              <p style={{ fontSize: 11, color: '#a7f3d0' }}>{t('confirmSpotShareHost')}</p>
               <p style={{ fontSize: 14, fontWeight: 600, color: 'white' }}>{l.host}</p>
             </div>
           </div>
@@ -148,20 +146,20 @@ export default function ConfirmationPage({ nav, selectedListing, locale, setLoca
           {[
             {
               icon: <MapPin size={18} color={green} />,
-              label: 'Parking Address',
+              label: t('confirmParkingAddress'),
               val: l.address,
-              sub: `${l.area} · ${l.walk} to campus`,
+              sub: `${l.area} · ${l.walk} ${t('walkToCampusSuffix')}`,
             },
             {
               icon: <Calendar size={18} color={green} />,
-              label: 'Date',
+              label: t('dateLabel'),
               val: b.date,
             },
             {
               icon: <Clock size={18} color={green} />,
-              label: 'Time',
+              label: t('confirmTimeLabel'),
               val: `${b.start} – ${b.end}`,
-              sub: `${b.hours} hours`,
+              sub: t('confirmHoursSub', { hours: b.hours }),
             },
           ].map((item, i) => (
             <div
@@ -227,11 +225,10 @@ export default function ConfirmationPage({ nav, selectedListing, locale, setLoca
               marginBottom: 6,
             }}
           >
-            Access Instructions
+            {t('confirmAccessTitle')}
           </p>
           <p style={{ fontSize: 13, color: '#374151', lineHeight: 1.6 }}>
-            The driveway is on the left side of the house. The gate code is{' '}
-            <strong>4521</strong>. Please do not block the garage door.
+            {t('confirmAccessBody')}
           </p>
         </div>
 
@@ -248,14 +245,14 @@ export default function ConfirmationPage({ nav, selectedListing, locale, setLoca
             onClick={() => nav('student-dashboard')}
             style={{ padding: '12px 28px' }}
           >
-            View Dashboard
+            {t('viewDashboard')}
           </Btn>
           <Btn
             onClick={() => nav('search')}
             variant="outline"
             style={{ padding: '12px 28px' }}
           >
-            Book Another Spot
+            {t('bookAnother')}
           </Btn>
         </div>
       </div>

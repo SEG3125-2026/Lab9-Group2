@@ -2,25 +2,29 @@ import { useState } from 'react'
 import { Search, ChevronDown, ChevronUp, Mail, Phone } from 'lucide-react'
 import Navbar from '../components/Navbar.jsx'
 import { Btn } from '../components/UI.jsx'
-import { FAQ_ITEMS, COLORS } from '../data/listings.js'
+import { FAQ_ITEMS, FAQ_ITEMS_FR, COLORS } from '../data/listings.js'
 
 const { green, darkGreen } = COLORS
 
-const CATEGORIES = [
-  ['Getting Started', '📘'],
-  ['Parking & Bookings', '🚗'],
-  ['Payments', '💳'],
-  ['Safety & Trust', '🛡️'],
-  ['Hosting', '🏠'],
+const CATEGORY_KEYS = [
+  'faqCatGettingStarted',
+  'faqCatParking',
+  'faqCatPayments',
+  'faqCatSafety',
+  'faqCatHosting',
 ]
+
+const CATEGORY_EMOJI = ['📘', '🚗', '💳', '🛡️', '🏠']
 
 export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout }) {
   const [expanded, setExpanded] = useState(null)
-  const [category, setCategory] = useState('Getting Started')
+  const [categoryKey, setCategoryKey] = useState('faqCatGettingStarted')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [issue, setIssue] = useState('')
   const [submitted, setSubmitted] = useState(false)
+
+  const faqItems = locale === 'fr' ? FAQ_ITEMS_FR : FAQ_ITEMS
 
   const handleSubmit = () => {
     if (!name || !email) return
@@ -31,7 +35,6 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
     <div style={{ minHeight: '100vh', background: '#f9fafb' }}>
       <Navbar nav={nav} locale={locale} setLocale={setLocale} t={t} currentUser={currentUser} logout={logout} />
 
-      {/* Hero */}
       <div
         style={{
           background: darkGreen,
@@ -49,9 +52,7 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
         >
           {t('faqTitle')}
         </h1>
-        <p style={{ color: '#a7f3d0', marginBottom: 28 }}>
-          {t('faqSubtitle') || 'Search our help center or browse by topic below.'}
-        </p>
+        <p style={{ color: '#a7f3d0', marginBottom: 28 }}>{t('faqSubtitle')}</p>
         <div
           style={{
             display: 'flex',
@@ -67,7 +68,7 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
         >
           <Search size={16} color="#9ca3af" />
           <input
-            placeholder="Search questions, topics, and more..."
+            placeholder={t('faqSearchPlaceholder')}
             style={{
               flex: 1,
               border: 'none',
@@ -89,7 +90,6 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
           zIndex: 1,
         }}
       >
-        {/* Category pills */}
         <div
           style={{
             display: 'flex',
@@ -99,17 +99,18 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
             marginBottom: 32,
           }}
         >
-          {CATEGORIES.map(([c, e]) => (
+          {CATEGORY_KEYS.map((key, idx) => (
             <button
-              key={c}
-              onClick={() => setCategory(c)}
+              key={key}
+              type="button"
+              onClick={() => setCategoryKey(key)}
               style={{
                 display: 'flex',
                 gap: 8,
                 alignItems: 'center',
-                background: category === c ? green : 'white',
-                color: category === c ? 'white' : '#374151',
-                border: category === c ? 'none' : '1px solid #e5e7eb',
+                background: categoryKey === key ? green : 'white',
+                color: categoryKey === key ? 'white' : '#374151',
+                border: categoryKey === key ? 'none' : '1px solid #e5e7eb',
                 cursor: 'pointer',
                 padding: '12px 20px',
                 borderRadius: 12,
@@ -119,12 +120,11 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
               }}
             >
-              {e} {c}
+              {CATEGORY_EMOJI[idx]} {t(key)}
             </button>
           ))}
         </div>
 
-        {/* Two-column layout */}
         <div
           style={{
             display: 'grid',
@@ -133,7 +133,6 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
             alignItems: 'start',
           }}
         >
-          {/* FAQ accordion */}
           <div>
             <h3
               style={{
@@ -143,13 +142,13 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
                 marginBottom: 4,
               }}
             >
-              {category}
+              {t(categoryKey)}
             </h3>
             <p style={{ fontSize: 13, color: '#6b7280', marginBottom: 20 }}>
-              {FAQ_ITEMS.length} articles in this category
+              {t('faqArticlesInCategory', { count: faqItems.length })}
             </p>
 
-            {FAQ_ITEMS.map((item, i) => (
+            {faqItems.map((item, i) => (
               <div
                 key={i}
                 style={{
@@ -161,6 +160,7 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
                 }}
               >
                 <button
+                  type="button"
                   onClick={() => setExpanded(expanded === i ? null : i)}
                   style={{
                     width: '100%',
@@ -207,7 +207,6 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
             ))}
           </div>
 
-          {/* Contact support */}
           <div
             style={{
               background: 'white',
@@ -226,7 +225,7 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
                 marginBottom: 20,
               }}
             >
-              Contact Support
+              {t('faqContactSupport')}
             </h3>
 
             {submitted ? (
@@ -246,13 +245,10 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
                 >
                   ✓
                 </div>
-                <p style={{ fontWeight: 600, color: '#111', marginBottom: 4 }}>
-                  Message sent!
-                </p>
-                <p style={{ fontSize: 13, color: '#6b7280' }}>
-                  We'll get back to you within 24 hours.
-                </p>
+                <p style={{ fontWeight: 600, color: '#111', marginBottom: 4 }}>{t('faqMessageSent')}</p>
+                <p style={{ fontSize: 13, color: '#6b7280' }}>{t('faqMessageSentSub')}</p>
                 <button
+                  type="button"
                   onClick={() => setSubmitted(false)}
                   style={{
                     background: 'none',
@@ -264,13 +260,13 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
                     fontFamily: "'Plus Jakarta Sans', sans-serif",
                   }}
                 >
-                  Send another message
+                  {t('faqSendAnother')}
                 </button>
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
                 <input
-                  placeholder="Your name"
+                  placeholder={t('faqPlaceholderName')}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   style={{
@@ -284,7 +280,7 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
                   }}
                 />
                 <input
-                  placeholder="Email address"
+                  placeholder={t('faqPlaceholderEmail')}
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -299,7 +295,7 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
                   }}
                 />
                 <textarea
-                  placeholder="Describe your issue..."
+                  placeholder={t('faqPlaceholderIssue')}
                   rows={4}
                   value={issue}
                   onChange={(e) => setIssue(e.target.value)}
@@ -323,7 +319,7 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
                     borderRadius: 10,
                   }}
                 >
-                  Send Message
+                  {t('faqSendMessage')}
                 </Btn>
               </div>
             )}
@@ -336,21 +332,13 @@ export default function FAQPage({ nav, locale, setLocale, t, currentUser, logout
               }}
             />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <div
-                style={{ display: 'flex', gap: 10, alignItems: 'center' }}
-              >
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                 <Mail size={16} color={green} />
-                <span style={{ fontSize: 13, color: '#374151' }}>
-                  support@spotshare.com
-                </span>
+                <span style={{ fontSize: 13, color: '#374151' }}>support@spotshare.com</span>
               </div>
-              <div
-                style={{ display: 'flex', gap: 10, alignItems: 'center' }}
-              >
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                 <Phone size={16} color={green} />
-                <span style={{ fontSize: 13, color: '#374151' }}>
-                  1-800-SPOT-SHARE
-                </span>
+                <span style={{ fontSize: 13, color: '#374151' }}>1-800-SPOT-SHARE</span>
               </div>
             </div>
           </div>

@@ -16,15 +16,36 @@ export default function LoginPage({
 }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
     if (!email.trim() || !password.trim()) return
-    const local = email.split('@')[0] || 'User'
-    const parts = local.split(/[._-]/).filter(Boolean)
-    const firstName = parts[0] ? parts[0].charAt(0).toUpperCase() + parts[0].slice(1) : 'Alex'
-    const lastName = parts[1] ? parts[1].charAt(0).toUpperCase() + parts[1].slice(1) : 'Chen'
-    completeLogin({ firstName, lastName, email: email.trim() })
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim(), password }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setError(data.error || t('loginErrorGeneric'))
+        return
+      }
+      completeLogin({
+        userId: data.user?.userId,
+        firstName: data.user?.firstName,
+        lastName: data.user?.lastName,
+        email: data.user?.email,
+      })
+    } catch {
+      setError(t('loginErrorNetwork'))
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -51,6 +72,19 @@ export default function LoginPage({
         <p style={{ color: '#6b7280', textAlign: 'center', marginBottom: 32, fontSize: 15 }}>
           {t('loginSubtitle')}
         </p>
+
+        {error && (
+          <p
+            style={{
+              color: '#b91c1c',
+              textAlign: 'center',
+              marginBottom: 16,
+              fontSize: 14,
+            }}
+          >
+            {error}
+          </p>
+        )}
 
         <form
           onSubmit={handleSubmit}
@@ -103,8 +137,12 @@ export default function LoginPage({
             }}
           />
 
-          <Btn type="submit" style={{ width: '100%', justifyContent: 'center', padding: '14px' }}>
-            {t('submitLogin')}
+          <Btn
+            type="submit"
+            disabled={submitting}
+            style={{ width: '100%', justifyContent: 'center', padding: '14px', opacity: submitting ? 0.7 : 1 }}
+          >
+            {submitting ? '…' : t('submitLogin')}
           </Btn>
         </form>
 

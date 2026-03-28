@@ -51,12 +51,12 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
           }}
         >
           <ArrowLeft size={16} />
-          Back
+          {t('back')}
         </button>
 
         {/* Progress steps */}
         <div style={{ display: 'flex', gap: 8, marginBottom: 32, alignItems: 'center' }}>
-          {['Booking Details', 'Payment', 'Confirm'].map((s, i) => (
+          {[t('bookingStepDetails'), t('bookingStepPayment'), t('bookingStepConfirm')].map((s, i) => (
             <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <div
@@ -135,23 +135,23 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                     marginBottom: 24,
                   }}
                 >
-                  Your Booking
+                  {t('yourBooking')}
                 </h2>
                 {[
                   {
                     icon: <Calendar size={18} color={green} />,
-                    title: 'Mon, Mar 16, 2026',
-                    sub: '8:00 AM – 5:00 PM · 9 hrs',
+                    title: t('demoBookingDate'),
+                    sub: t('demoBookingTimeRange', { hours, hrs: t('hrsShort') }),
                   },
                   {
                     icon: <MapPin size={18} color={green} />,
                     title: l.address,
-                    sub: `${l.walk} to campus · ${l.area}`,
+                    sub: `${l.walk} ${t('walkToCampusSuffix')} · ${l.area}`,
                   },
                   {
                     icon: <CheckCircle size={18} color={green} />,
-                    title: 'Free cancellation',
-                    sub: 'Cancel up to 24 hours before for a full refund',
+                    title: t('freeCancellationTitle'),
+                    sub: t('freeCancellationSub'),
                   },
                 ].map((item, i) => (
                   <div
@@ -198,7 +198,7 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                     marginBottom: 14,
                   }}
                 >
-                  Parking Rules
+                  {t('parkingRules')}
                 </h3>
                 <p
                   style={{
@@ -207,7 +207,7 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                     marginBottom: 12,
                   }}
                 >
-                  Please review and agree to the host's rules before booking.
+                  {t('pleaseAgree')}
                 </p>
                 {l.rules.map((r, i) => (
                   <div
@@ -250,8 +250,8 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                     style={{ marginTop: 3 }}
                   />
                   <span style={{ fontSize: 13, color: '#374151' }}>
-                    I agree to the host's parking rules and SpotShare's{' '}
-                    <span style={{ color: green }}>Terms of Service</span>
+                    {t('agreeRulesCheckbox')}{' '}
+                    <span style={{ color: green }}>{t('termsOfService')}</span>
                   </span>
                 </label>
               </div>
@@ -275,12 +275,12 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                     marginBottom: 24,
                   }}
                 >
-                  Payment Method
+                  {t('paymentMethodTitle')}
                 </h2>
                 <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
                   {[
-                    ['card', '💳 Credit/Debit Card'],
-                    ['apple', '🍎 Apple Pay'],
+                    ['card', t('payCard')],
+                    ['apple', t('payApple')],
                   ].map(([v, label]) => (
                     <button
                       key={v}
@@ -304,8 +304,10 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                 </div>
                 {paymentMethod === 'card' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                    {[['Cardholder Name', 'Full name on card'], ['Card Number', '1234 5678 9012 3456']].map(
-                      ([label, placeholder]) => (
+                    {[
+                      [t('cardholderName'), t('fullNameOnCard')],
+                      [t('cardNumber'), t('cardNumberPlaceholder')],
+                    ].map(([label, placeholder]) => (
                         <div key={label}>
                           <label
                             style={{
@@ -334,7 +336,10 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                       )
                     )}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                      {[['Expiry Date', 'MM/YY'], ['CVV', '•••']].map(([label, placeholder]) => (
+                      {[
+                        [t('expiryDate'), t('expiryPlaceholder')],
+                        [t('cvv'), '•••'],
+                      ].map(([label, placeholder]) => (
                         <div key={label}>
                           <label
                             style={{
@@ -373,9 +378,7 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                       textAlign: 'center',
                     }}
                   >
-                    <p style={{ fontSize: 14, color: '#6b7280' }}>
-                      Apple Pay will be prompted when you confirm your booking.
-                    </p>
+                    <p style={{ fontSize: 14, color: '#6b7280' }}>{t('applePayPrompt')}</p>
                   </div>
                 )}
               </div>
@@ -399,7 +402,7 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                     marginBottom: 24,
                   }}
                 >
-                  Confirm Your Booking
+                  {t('confirmYourBooking')}
                 </h2>
                 <div
                   style={{
@@ -410,11 +413,14 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                   }}
                 >
                   {[
-                    ['Location', l.address],
-                    ['Date', 'Mon, Mar 16, 2026'],
-                    ['Time', '8:00 AM – 5:00 PM (9 hrs)'],
-                    ['Host', l.host],
-                    ['Total', `$${total.toFixed(2)}`],
+                    [t('confirmLocationLabel'), l.address],
+                    [t('dateLabel'), t('demoBookingDate')],
+                    [
+                      t('confirmTimeLabel'),
+                      `${t('demoBookingTimeSlot')} (${t('confirmHoursSub', { hours })})`,
+                    ],
+                    [t('confirmHostLabel'), l.host],
+                    [t('totalLabel'), `$${total.toFixed(2)}`],
                   ].map(([label, value]) => (
                     <div
                       key={label}
@@ -429,7 +435,7 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                       <span style={{ color: '#6b7280' }}>{label}</span>
                       <span
                         style={{
-                          fontWeight: label === 'Total' ? 700 : 500,
+                          fontWeight: label === t('totalLabel') ? 700 : 500,
                           color: '#111',
                         }}
                       >
@@ -451,7 +457,7 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                 >
                   <Info size={16} color="#d97706" style={{ flexShrink: 0, marginTop: 1 }} />
                   <p style={{ fontSize: 13, color: '#92400e' }}>
-                    By confirming, you agree to be charged ${total.toFixed(2)} upon approval.
+                    {t('bookingChargeNotice', { amt: total.toFixed(2) })}
                   </p>
                 </div>
               </div>
@@ -467,7 +473,7 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
             >
               {step > 1 ? (
                 <Btn onClick={() => setStep((s) => s - 1)} variant="outline">
-                  ← Back
+                  ← {t('back')}
                 </Btn>
               ) : (
                 <div />
@@ -476,36 +482,42 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                 <Btn
                   onClick={() => {
                     if (step === 1 && !agreed) {
-                      alert('Please agree to the parking rules before continuing.')
+                      alert(t('alertAgreeRules'))
                       return
                     }
                     setStep((s) => s + 1)
                   }}
                 >
-                  Continue →
+                  {t('continueArrow')}
                 </Btn>
               ) : (
                 <Btn
-                  onClick={() => {
+                  onClick={async () => {
                     if (!currentUser?.email) {
                       nav('login')
                       return
                     }
-                    completeBooking({
-                      email: currentUser.email,
-                      listing: l,
-                      date: 'Mon, Mar 16, 2026',
-                      start: '8:00 AM',
-                      end: '5:00 PM',
-                      hours,
-                      total,
-                    })
-                    nav('confirmation')
+                    try {
+                      await completeBooking({
+                        email: currentUser.email,
+                        listingId: l.id ?? l.listing_id,
+                        listing: l,
+                        date: t('demoBookingDate'),
+                        dateIso: '2026-03-16',
+                        start: '8:00 AM',
+                        end: '5:00 PM',
+                        hours,
+                        total,
+                      })
+                      nav('confirmation')
+                    } catch (e) {
+                      alert(e.message || t('bookingFailedApi'))
+                    }
                   }}
                   style={{ background: '#16a34a' }}
                 >
                   <Check size={16} />
-                  Confirm & Pay ${total.toFixed(2)}
+                  {t('bookingConfirmPay', { amt: total.toFixed(2) })}
                 </Btn>
               )}
             </div>
@@ -563,7 +575,9 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                 >
                   {l.name}
                 </p>
-                <p style={{ fontSize: 12, color: '#6b7280' }}>Hosted by {l.host}</p>
+                <p style={{ fontSize: 12, color: '#6b7280' }}>
+                  {t('hostedByPrefix')} {l.host}
+                </p>
               </div>
             </div>
 
@@ -575,11 +589,14 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                 marginBottom: 12,
               }}
             >
-              Price Details
+              {t('priceDetails')}
             </h4>
             {[
-              [`$${l.price} × ${hours} hours`, `$${subtotal.toFixed(2)}`],
-              ['Service fee (10%)', `$${fee}`],
+              [
+                t('priceTimesHoursLong', { price: `$${l.price}`, hours }),
+                `$${subtotal.toFixed(2)}`,
+              ],
+              [t('serviceFeePct'), `$${fee}`],
             ].map(([label, value]) => (
               <div
                 key={label}
@@ -607,7 +624,7 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
                 color: '#111',
               }}
             >
-              <span>Total (USD)</span>
+              <span>{t('totalUsd')}</span>
               <span>${total.toFixed(2)}</span>
             </div>
 
@@ -624,9 +641,7 @@ export default function BookingPage({ nav, selectedListing, locale, setLocale, t
               }}
             >
               <Shield size={13} color={green} style={{ flexShrink: 0, marginTop: 1 }} />
-              <p style={{ fontSize: 12, color: '#065f46' }}>
-                SpotShare Guarantee: Full refund if the spot is unavailable when you arrive.
-              </p>
+              <p style={{ fontSize: 12, color: '#065f46' }}>{t('guaranteeRefundShort')}</p>
             </div>
           </div>
         </div>

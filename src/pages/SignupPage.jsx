@@ -18,15 +18,41 @@ export default function SignupPage({
   const [lastName, setLastName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    setError('')
     if (!firstName.trim() || !lastName.trim() || !email.trim() || !password.trim()) return
-    completeSignup({
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      email: email.trim(),
-    })
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          email: email.trim(),
+          password,
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setError(data.error || t('signupErrorGeneric'))
+        return
+      }
+      completeSignup({
+        userId: data.user?.userId,
+        firstName: data.user?.firstName ?? firstName.trim(),
+        lastName: data.user?.lastName ?? lastName.trim(),
+        email: data.user?.email ?? email.trim().toLowerCase(),
+      })
+    } catch {
+      setError(t('signupErrorNetwork'))
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -53,6 +79,19 @@ export default function SignupPage({
         <p style={{ color: '#6b7280', textAlign: 'center', marginBottom: 32, fontSize: 15 }}>
           {t('signUpSubtitle')}
         </p>
+
+        {error && (
+          <p
+            style={{
+              color: '#b91c1c',
+              textAlign: 'center',
+              marginBottom: 16,
+              fontSize: 14,
+            }}
+          >
+            {error}
+          </p>
+        )}
 
         <form
           onSubmit={handleSubmit}
@@ -145,8 +184,12 @@ export default function SignupPage({
             }}
           />
 
-          <Btn type="submit" style={{ width: '100%', justifyContent: 'center', padding: '14px' }}>
-            {t('submitSignUp')}
+          <Btn
+            type="submit"
+            disabled={submitting}
+            style={{ width: '100%', justifyContent: 'center', padding: '14px', opacity: submitting ? 0.7 : 1 }}
+          >
+            {submitting ? '…' : t('submitSignUp')}
           </Btn>
         </form>
 

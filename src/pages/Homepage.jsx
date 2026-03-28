@@ -116,9 +116,7 @@ export default function HomePage({ nav, locale, setLocale, t, currentUser, logou
             </Btn>
           </div>
 
-          <p style={{ color: '#6ee7b7', fontSize: 12, marginTop: 12 }}>
-            Popular: State University, City College, Tech Institute
-          </p>
+          <p style={{ color: '#6ee7b7', fontSize: 12, marginTop: 12 }}>{t('popularExamples')}</p>
         </div>
       </div>
 
@@ -136,10 +134,10 @@ export default function HomePage({ nav, locale, setLocale, t, currentUser, logou
           }}
         >
           {[
-            ['12,000+', 'Commuters Served'],
-            ['3,400+', 'Spots Listed'],
-            ['$70 avg', 'Saved Per Month'],
-            ['4.9★', 'Average Rating'],
+            ['12,000+', t('statCommuters')],
+            ['3,400+', t('statSpotsListed')],
+            ['$70 avg', t('statSavedPerMonth')],
+            ['4.9★', t('statAvgRating')],
           ].map(([val, label]) => (
             <div key={label}>
               <div style={{ color: 'white', fontSize: 26, fontWeight: 800 }}>{val}</div>
@@ -251,7 +249,7 @@ export default function HomePage({ nav, locale, setLocale, t, currentUser, logou
               marginBottom: 48,
             }}
           >
-            Why Students Love SpotShare
+            {t('whyLoveTitle')}
           </h2>
           <div
             style={{
@@ -261,13 +259,13 @@ export default function HomePage({ nav, locale, setLocale, t, currentUser, logou
             }}
           >
             {[
-              { e: '💰', t: 'Save Money', d: 'Up to 70% cheaper than campus permits' },
-              { e: '⚡', t: 'Instant Booking', d: 'Reserve in under 2 minutes' },
-              { e: '🗺️', t: 'Close to Campus', d: 'All spots within 15 min walk' },
-              { e: '🔒', t: 'Secure Payments', d: 'Encrypted and protected' },
+              { e: '💰', title: t('whyCardSave'), d: t('whyCardSaveD') },
+              { e: '⚡', title: t('whyCardInstant'), d: t('whyCardInstantD') },
+              { e: '🗺️', title: t('whyCardClose'), d: t('whyCardCloseD') },
+              { e: '🔒', title: t('whyCardSecure'), d: t('whyCardSecureD') },
             ].map((item) => (
               <div
-                key={item.t}
+                key={item.title}
                 style={{
                   background: 'white',
                   borderRadius: 16,
@@ -278,7 +276,7 @@ export default function HomePage({ nav, locale, setLocale, t, currentUser, logou
               >
                 <div style={{ fontSize: 32, marginBottom: 12 }}>{item.e}</div>
                 <p style={{ fontWeight: 700, fontSize: 15, color: '#111', marginBottom: 6 }}>
-                  {item.t}
+                  {item.title}
                 </p>
                 <p style={{ fontSize: 13, color: '#6b7280' }}>{item.d}</p>
               </div>
@@ -321,9 +319,7 @@ export default function HomePage({ nav, locale, setLocale, t, currentUser, logou
             Spot<span style={{ color: '#34d399' }}>Share</span>
           </span>
         </div>
-        <p style={{ color: '#6ee7b7', fontSize: 13 }}>
-          © 2026 SpotShare. All rights reserved.
-        </p>
+        <p style={{ color: '#6ee7b7', fontSize: 13 }}>{t('footerCopyright')}</p>
         <div
           style={{
             display: 'flex',
@@ -332,7 +328,7 @@ export default function HomePage({ nav, locale, setLocale, t, currentUser, logou
             marginTop: 16,
           }}
         >
-          {['Privacy Policy', 'Terms of Service', 'Contact Us'].map((l) => (
+          {[t('footerPrivacy'), t('footerTerms'), t('footerContact')].map((l) => (
             <button
               key={l}
               style={{

@@ -39,7 +39,7 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
 
   const sendMsg = () => {
     if (!msgText.trim()) return
-    setMessages((prev) => [...prev, { from: 'student', text: msgText, time: 'Now' }])
+    setMessages((prev) => [...prev, { from: 'student', text: msgText, time: t('now') }])
     setMsgText('')
   }
 
@@ -60,22 +60,22 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
   const walkMinutesThisMonth = bookingsThisMonth
     .map((b) => parseWalkMinutes(b.listing?.walk))
     .filter((n) => n != null && !Number.isNaN(n))
-  const avgWalkDisplay =
+  const avgWalkN =
     walkMinutesThisMonth.length > 0
-      ? `${Math.round(
-          walkMinutesThisMonth.reduce((a, x) => a + x, 0) / walkMinutesThisMonth.length
-        )} min`
-      : '—'
+      ? Math.round(walkMinutesThisMonth.reduce((a, x) => a + x, 0) / walkMinutesThisMonth.length)
+      : null
+  const avgWalkDisplay =
+    avgWalkN != null ? t('avgWalkMinutes', { n: avgWalkN }) : '—'
 
   const statRows = [
-    [String(countThisMonth), 'Bookings this month', Car],
+    [String(countThisMonth), t('studentStatBookingsMonth'), Car],
     [
       Number.isInteger(hoursThisMonth) ? String(hoursThisMonth) : hoursThisMonth.toFixed(1),
-      'Hours booked (this month)',
+      t('studentStatHoursMonth'),
       Clock,
     ],
-    [`$${spentThisMonth.toFixed(2)}`, 'Total spent (this month)', DollarSign],
-    [avgWalkDisplay, 'Avg walk time (this month)', MapPin],
+    [`$${spentThisMonth.toFixed(2)}`, t('studentStatSpentMonth'), DollarSign],
+    [avgWalkDisplay, t('studentStatAvgWalk'), MapPin],
   ]
 
   return (
@@ -113,7 +113,7 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
                 : 'AC'}
             </div>
             <div>
-              <p style={{ fontSize: 12, color: '#6b7280' }}>{t('welcomeBack') || 'Welcome back 👋'}</p>
+              <p style={{ fontSize: 12, color: '#6b7280' }}>{t('welcomeBack')}</p>
               <p style={{ fontWeight: 800, fontSize: 20, color: '#111' }}>
                 {currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'Alex Chen'}
               </p>
@@ -121,7 +121,7 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
           </div>
           <Btn onClick={() => nav('search')} style={{ padding: '10px 20px' }}>
             <Plus size={16} />
-            {t('bookSpot') || 'Book a Spot'}
+            {t('bookSpot')}
           </Btn>
         </div>
 
@@ -137,7 +137,7 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
           >
             {statRows.map(([val, label, Icon]) => (
               <div
-                key={label}
+                key={String(label)}
                 style={{
                   background: 'white',
                   border: '1px solid #e5e7eb',
@@ -209,12 +209,12 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
               (upcomingBookings.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
                   <Car size={40} color="#d1d5db" style={{ margin: '0 auto 12px' }} />
-                  <p style={{ color: '#6b7280', marginBottom: 8 }}>No upcoming bookings yet.</p>
+                  <p style={{ color: '#6b7280', marginBottom: 8 }}>{t('studentNoUpcomingTitle')}</p>
                   <p style={{ color: '#9ca3af', fontSize: 14, maxWidth: 360, margin: '0 auto 16px' }}>
-                    When you book and pay for a spot, it will show up here.
+                    {t('studentNoUpcomingBody')}
                   </p>
                   <Btn onClick={() => nav('search')} style={{ marginTop: 8 }}>
-                    Find parking
+                    {t('findParking')}
                   </Btn>
                 </div>
               ) : (
@@ -260,7 +260,13 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
                           marginBottom: 4,
                         }}
                       >
-                        <Tag color={green}>{b.status}</Tag>
+                        <Tag color={green}>
+                          {b.status === 'Confirmed'
+                            ? t('confirmed')
+                            : b.status === 'Completed'
+                              ? t('bookingStatusCompleted')
+                              : b.status}
+                        </Tag>
                         <span style={{ fontSize: 12, color: '#9ca3af' }}>#{b.id}</span>
                       </div>
                       <p
@@ -323,14 +329,14 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
                       style={{ padding: '8px 16px', fontSize: 13, borderRadius: 8 }}
                     >
                       <MessageCircle size={13} />
-                      Message Host
+                      {t('studentMessageHost')}
                     </Btn>
                     <Btn
                       variant="outline"
                       style={{ padding: '8px 16px', fontSize: 13, borderRadius: 8 }}
                     >
                       <Navigation size={13} />
-                      Directions
+                      {t('studentDirections')}
                     </Btn>
                     <button
                       style={{
@@ -344,7 +350,7 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
                         fontFamily: "'Plus Jakarta Sans', sans-serif",
                       }}
                     >
-                      ✕ Cancel
+                      {t('studentCancelBooking')}
                     </button>
                   </div>
                 </div>
@@ -357,7 +363,7 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
               (pastBookings.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
                   <Car size={40} color="#d1d5db" style={{ margin: '0 auto 12px' }} />
-                  <p style={{ color: '#6b7280' }}>No past bookings yet.</p>
+                  <p style={{ color: '#6b7280' }}>{t('studentNoPastTitle')}</p>
                 </div>
               ) : (
                 pastBookings.map((b) => (
@@ -394,7 +400,13 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
                       <Car size={24} color="#9ca3af" />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <Tag color="#6b7280">{b.status}</Tag>
+                      <Tag color="#6b7280">
+                        {b.status === 'Confirmed'
+                          ? t('confirmed')
+                          : b.status === 'Completed'
+                            ? t('bookingStatusCompleted')
+                            : b.status}
+                      </Tag>
                       <p
                         style={{
                           fontWeight: 700,
@@ -431,7 +443,7 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
                           fontFamily: "'Plus Jakarta Sans', sans-serif",
                         }}
                       >
-                        Leave Review
+                        {t('studentLeaveReview')}
                       </button>
                     </div>
                   </div>
@@ -445,9 +457,9 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
               (saved.length === 0 ? (
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
                   <Heart size={40} color="#d1d5db" style={{ margin: '0 auto 12px' }} />
-                  <p style={{ color: '#6b7280' }}>No saved spots yet.</p>
+                  <p style={{ color: '#6b7280' }}>{t('studentNoSavedTitle')}</p>
                   <Btn onClick={() => nav('search')} style={{ marginTop: 16 }}>
-                    Browse Spots
+                    {t('studentBrowseSpots')}
                   </Btn>
                 </div>
               ) : (
@@ -483,14 +495,15 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
                         {l.name}
                       </p>
                       <span style={{ fontSize: 12, color: '#6b7280' }}>
-                        ${l.price}/hr · {l.walk}
+                        ${l.price}
+                        {t('perHour')} · {l.walk}
                       </span>
                     </div>
                     <Btn
                       onClick={() => nav('listing', l)}
                       style={{ padding: '8px 16px', fontSize: 13, borderRadius: 8 }}
                     >
-                      Book Now
+                      {t('bookNow')}
                     </Btn>
                     <button
                       onClick={() => toggleSave(l.id)}
@@ -534,9 +547,9 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
                   </div>
                   <div>
                     <p style={{ fontWeight: 600, fontSize: 14, color: '#111' }}>
-                      Sarah M. · Private Driveway — Oak Street
+                      {t('studentChatPreviewTitle')}
                     </p>
-                    <p style={{ fontSize: 12, color: green }}>Online</p>
+                    <p style={{ fontSize: 12, color: green }}>{t('studentOnline')}</p>
                   </div>
                 </div>
 
@@ -595,7 +608,7 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
                     onKeyDown={(e) => {
                       if (e.key === 'Enter') sendMsg()
                     }}
-                    placeholder="Type a message..."
+                    placeholder={t('studentTypeMessage')}
                     style={{
                       flex: 1,
                       border: '1px solid #e5e7eb',
@@ -607,7 +620,7 @@ export default function StudentDashboard({ nav, savedListings, toggleSave, messa
                     }}
                   />
                   <Btn onClick={sendMsg} style={{ borderRadius: 10, padding: '10px 18px' }}>
-                    Send
+                    {t('studentSend')}
                   </Btn>
                 </div>
               </div>

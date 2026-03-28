@@ -286,6 +286,27 @@ export default function Navbar({
             gap: 16,
           }}
         >
+          <button
+            type="button"
+            onClick={() => {
+              setLocale(languageContext)
+              setMobileMenu(false)
+            }}
+            style={{
+              background: 'none',
+              border: '1px solid rgba(107,114,128,0.35)',
+              cursor: 'pointer',
+              textAlign: 'left',
+              fontSize: 15,
+              color: dark ? 'white' : '#374151',
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              padding: '10px 12px',
+              borderRadius: 10,
+              alignSelf: 'flex-start',
+            }}
+          >
+            {locale === 'en' ? 'FR' : 'EN'}
+          </button>
           {mobileLinks.map(([l, target]) => (
             <button
               key={`${l}-${target}`}

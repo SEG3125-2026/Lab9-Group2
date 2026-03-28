@@ -25,6 +25,34 @@ export const FAQ_ITEMS = [
   },
 ]
 
+/** Same order as FAQ_ITEMS — used when locale is `fr`. */
+export const FAQ_ITEMS_FR = [
+  {
+    q: 'Comment fonctionne SpotShare ?',
+    a: 'SpotShare met en relation les étudiants navetteurs et les propriétaires qui ont une entrée ou un stationnement inutilisé près du campus. Les étudiants cherchent une place, réservent sur la plateforme et paient en ligne en toute sécurité. Les hôtes reçoivent le paiement automatiquement après chaque réservation.',
+  },
+  {
+    q: 'Ai-je besoin d’un compte pour parcourir les annonces ?',
+    a: 'Non, vous pouvez voir les places disponibles sans compte. En revanche, vous devez créer un compte et vous connecter pour réserver ou publier une annonce.',
+  },
+  {
+    q: 'SpotShare est-il réservé aux étudiants universitaires ?',
+    a: 'SpotShare s’adresse surtout aux étudiants navetteurs, mais toute personne qui a besoin d’un stationnement près d’un campus peut l’utiliser. Les hôtes peuvent être des propriétaires ou des particuliers disposant d’une place libre.',
+  },
+  {
+    q: 'Comment annuler une réservation ?',
+    a: 'Vous pouvez annuler jusqu’à 24 heures avant le début pour un remboursement intégral. Une annulation à moins de 24 heures peut donner lieu à un remboursement partiel selon la politique d’annulation de l’hôte.',
+  },
+  {
+    q: 'Quels modes de paiement sont acceptés ?',
+    a: 'SpotShare accepte les principales cartes de crédit et de débit (Visa, Mastercard, American Express) ainsi qu’Apple Pay. Les paiements sont traités en toute sécurité par notre partenaire de paiement.',
+  },
+  {
+    q: 'Qu’est-ce que la garantie hôte SpotShare ?',
+    a: 'La garantie hôte SpotShare protège les étudiants si la place est indisponible à votre arrivée. Vous recevez alors un remboursement intégral et nous vous aidons à trouver une autre place à proximité.',
+  },
+]
+
 export const COLORS = {
   green: '#10b981',
   darkGreen: '#064e3b',

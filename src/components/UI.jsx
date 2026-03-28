@@ -3,16 +3,17 @@ import { COLORS } from '../data/listings.js'
 
 const { green, lightGreen } = COLORS
 
-export function Btn({ children, onClick, variant = 'primary', type = 'button', style: s = {} }) {
+export function Btn({ children, onClick, variant = 'primary', type = 'button', disabled = false, style: s = {} }) {
   return (
     <button
       type={type}
       onClick={onClick}
+      disabled={disabled}
       style={{
         background: variant === 'primary' ? green : variant === 'outline' ? 'white' : '#f3f4f6',
         color: variant === 'primary' ? 'white' : variant === 'outline' ? green : '#374151',
         border: variant === 'outline' ? `1.5px solid ${green}` : 'none',
-        cursor: 'pointer',
+        cursor: disabled ? 'not-allowed' : 'pointer',
         padding: '12px 24px',
         borderRadius: 12,
         fontWeight: 600,
@@ -46,7 +47,7 @@ export function Tag({ children, color = green }) {
   )
 }
 
-export function ListingCard({ listing, onClick, savedListings, toggleSave }) {
+export function ListingCard({ listing, onClick, savedListings, toggleSave, t = (k) => k }) {
   return (
     <div
       onClick={() => onClick(listing)}
@@ -161,14 +162,16 @@ export function ListingCard({ listing, onClick, savedListings, toggleSave }) {
           >
             <User size={12} color={green} />
           </div>
-          <span style={{ fontSize: 12, color: '#6b7280' }}>Hosted by {listing.host}</span>
+          <span style={{ fontSize: 12, color: '#6b7280' }}>
+            {t('hostedByPrefix')} {listing.host}
+          </span>
         </div>
       </div>
     </div>
   )
 }
 
-export function GuaranteeBadge() {
+export function GuaranteeBadge({ t = (k) => k }) {
   return (
     <div
       style={{
@@ -183,9 +186,7 @@ export function GuaranteeBadge() {
       }}
     >
       <Shield size={14} color={green} style={{ flexShrink: 0, marginTop: 2 }} />
-      <p style={{ fontSize: 12, color: '#065f46' }}>
-        SpotShare protects every booking with our Host Guarantee.
-      </p>
+      <p style={{ fontSize: 12, color: '#065f46' }}>{t('guaranteeBadge')}</p>
     </div>
   )
 }

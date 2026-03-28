@@ -4,12 +4,14 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently -k -n \"api,vite\" -c \"green,cyan\" \"npm run dev:server\" \"wait-on file:.spotshare-api-port && vite\"",
     "dev:vite": "vite",
     "dev:server": "node server/index.mjs",
-    "db:seed": "node db/seed.mjs",
+    "dev:server:3002": "PORT=3002 node server/index.mjs",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "db:shell": "sqlite3 data/spotshare.db",
+    "db:users": "sqlite3 data/spotshare.db \"SELECT user_id, first_name, last_name, email, role, created_at FROM users;\""
   },
   "dependencies": {
     "better-sqlite3": "^11.7.0",
@@ -20,6 +22,8 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "concurrently": "^9.1.0",
+    "wait-on": "^8.0.1",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.2.1",

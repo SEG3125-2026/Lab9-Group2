@@ -1,15 +1,50 @@
-import { useEffect } from 'react'
-import { ArrowLeft, Share2, Heart, MapPin, Navigation, Star, Shield, Check, User } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { ArrowLeft, Share2, Heart, MapPin, Navigation, Star, Check } from 'lucide-react'
 import Navbar from '../components/Navbar.jsx'
 import { Btn, Tag, GuaranteeBadge } from '../components/UI.jsx'
 import { COLORS } from '../data/listings.js'
+import { fetchListingRaw, normalizeListingFromApi } from '../utils/listingApi.js'
 
 const { green, lightGreen } = COLORS
 
-export default function ListingPage({ nav, selectedListing, savedListings, toggleSave, locale, setLocale, t, currentUser, logout }) {
+export default function ListingPage({
+  nav,
+  selectedListing,
+  setSelectedListing,
+  savedListings,
+  toggleSave,
+  locale,
+  setLocale,
+  t,
+  currentUser,
+  logout,
+}) {
+  const [displayListing, setDisplayListing] = useState(null)
+
   useEffect(() => {
     if (!selectedListing) nav('search')
   }, [selectedListing, nav])
+
+  useEffect(() => {
+    const id = selectedListing?.id ?? selectedListing?.listing_id
+    if (!id) {
+      setDisplayListing(null)
+      return
+    }
+    setDisplayListing(selectedListing)
+    let cancelled = false
+    fetchListingRaw(id)
+      .then((row) => {
+        if (cancelled) return
+        const next = normalizeListingFromApi(row)
+        setDisplayListing(next)
+        setSelectedListing(next)
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [selectedListing?.id, selectedListing?.listing_id, setSelectedListing])
 
   if (!selectedListing) {
     return (
@@ -19,7 +54,7 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
     )
   }
 
-  const l = selectedListing
+  const l = displayListing || selectedListing
   const hours = 9
   const subtotal = l.price * hours
   const fee = +(subtotal * 0.1).toFixed(2)
@@ -206,7 +241,7 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
                     }}
                   >
                     <Navigation size={13} color={green} />
-                    {l.walk} to campus
+                    {l.walk} {t('walkToCampusSuffix')}
                   </span>
                   <span
                     style={{
@@ -218,7 +253,7 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
                     }}
                   >
                     <Star size={13} fill="#f59e0b" />
-                    {l.rating} · {l.reviews} reviews
+                    {l.rating} · {l.reviews} {t('reviewsWord')}
                   </span>
                 </div>
               </div>
@@ -226,7 +261,7 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
                 <span style={{ fontSize: 28, fontWeight: 800, color: '#111' }}>
                   ${l.price}
                 </span>
-                <span style={{ color: '#6b7280', fontSize: 14 }}>/hr</span>
+                <span style={{ color: '#6b7280', fontSize: 14 }}>{t('perHour')}</span>
               </div>
             </div>
 
@@ -261,11 +296,9 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
               </div>
               <div>
                 <p style={{ fontWeight: 600, fontSize: 15, color: '#111' }}>
-                  Hosted by {l.host}
+                  {t('hostedByPrefix')} {l.host}
                 </p>
-                <p style={{ fontSize: 13, color: '#6b7280' }}>
-                  Member since 2024 · Superhost
-                </p>
+                <p style={{ fontSize: 13, color: '#6b7280' }}>{t('memberSinceSuperhost')}</p>
               </div>
             </div>
 
@@ -278,7 +311,7 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
                 marginBottom: 12,
               }}
             >
-              Parking Rules
+              {t('parkingRules')}
             </h3>
             <div
               style={{
@@ -327,7 +360,7 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
                 marginBottom: 12,
               }}
             >
-              About this spot
+              {t('aboutThisSpot')}
             </h3>
             <p style={{ fontSize: 14, color: '#6b7280', lineHeight: 1.7 }}>
               {l.description}
@@ -356,7 +389,7 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
               <span style={{ fontSize: 26, fontWeight: 800, color: '#111' }}>
                 ${l.price}
               </span>
-              <span style={{ color: '#6b7280', fontSize: 14 }}>/hr</span>
+              <span style={{ color: '#6b7280', fontSize: 14 }}>{t('perHour')}</span>
             </div>
             <div
               style={{
@@ -371,7 +404,7 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
                 {l.rating}
               </span>
               <span style={{ fontSize: 13, color: '#6b7280' }}>
-                · {l.reviews} reviews
+                · {l.reviews} {t('reviewsWord')}
               </span>
             </div>
 
@@ -398,19 +431,22 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
                     textTransform: 'uppercase',
                   }}
                 >
-                  Date
+                  {t('dateLabel')}
                 </p>
                 <p style={{ fontSize: 14, fontWeight: 600, color: '#111' }}>
-                  Mon, Mar 16, 2026
+                  {t('demoBookingDate')}
                 </p>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-                {[['Start', '08:00'], ['End', '17:00']].map(([label, val]) => (
+                {[
+                  [t('startLabel'), '08:00', true],
+                  [t('endLabel'), '17:00', false],
+                ].map(([label, val, isStart]) => (
                   <div
-                    key={label}
+                    key={String(label)}
                     style={{
                       padding: '10px 14px',
-                      borderRight: label === 'Start' ? '1px solid #e5e7eb' : 'none',
+                      borderRight: isStart ? '1px solid #e5e7eb' : 'none',
                     }}
                   >
                     <p
@@ -438,7 +474,7 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
                       }}
                     >
                       <option>{val}</option>
-                      <option>{label === 'Start' ? '09:00' : '18:00'}</option>
+                      <option>{isStart ? '09:00' : '18:00'}</option>
                     </select>
                   </div>
                 ))}
@@ -448,8 +484,11 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
             {/* Price breakdown */}
             <div style={{ marginBottom: 16 }}>
               {[
-                [`$${l.price} × ${hours} hrs`, `$${subtotal.toFixed(2)}`],
-                ['Service fee (10%)', `$${fee}`],
+                [
+                  t('priceTimesHours', { price: `$${l.price}`, hours, hrs: t('hrsShort') }),
+                  `$${subtotal.toFixed(2)}`,
+                ],
+                [t('serviceFeePct'), `$${fee}`],
               ].map(([label, val]) => (
                 <div
                   key={label}
@@ -475,7 +514,7 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
                   color: '#111',
                 }}
               >
-                <span>Total</span>
+                <span>{t('totalLabel')}</span>
                 <span>${total.toFixed(2)}</span>
               </div>
             </div>
@@ -484,7 +523,7 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
               onClick={() => nav('booking')}
               style={{ width: '100%', justifyContent: 'center', padding: '14px', borderRadius: 12, fontSize: 15 }}
             >
-              Reserve This Spot
+              {t('reserveThisSpot')}
             </Btn>
             <p
               style={{
@@ -494,9 +533,9 @@ export default function ListingPage({ nav, selectedListing, savedListings, toggl
                 marginTop: 8,
               }}
             >
-              You won't be charged yet
+              {t('wontChargeYet')}
             </p>
-            <GuaranteeBadge />
+            <GuaranteeBadge t={t} />
           </div>
         </div>
       </div>

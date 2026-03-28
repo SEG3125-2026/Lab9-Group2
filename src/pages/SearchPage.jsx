@@ -7,10 +7,17 @@ import { fetchListings } from '../utils/listingApi.js'
 
 const { green } = COLORS
 
+const PRICE_FILTERS = [
+  { id: 'all', labelKey: 'priceFilterAll' },
+  { id: 'under3', labelKey: 'priceFilterUnder3' },
+  { id: 'mid', labelKey: 'priceFilter3to5' },
+  { id: 'over5', labelKey: 'priceFilterOver5' },
+]
+
 export default function SearchPage({ nav, savedListings, toggleSave, locale, setLocale, t, currentUser, logout }) {
   const [searchQuery, setSearchQuery] = useState('State University')
   const [viewMode, setViewMode] = useState('list')
-  const [priceFilter, setPriceFilter] = useState('All')
+  const [priceFilter, setPriceFilter] = useState('all')
   const [listings, setListings] = useState([])
   const [loadState, setLoadState] = useState('loading')
 
@@ -33,10 +40,10 @@ export default function SearchPage({ nav, savedListings, toggleSave, locale, set
   }, [])
 
   const filtered = listings.filter((l) => {
-    if (priceFilter === 'All') return true
-    if (priceFilter === '< $3/hr') return l.price < 3
-    if (priceFilter === '$3–$5/hr') return l.price >= 3 && l.price <= 5
-    if (priceFilter === '$5+/hr') return l.price > 5
+    if (priceFilter === 'all') return true
+    if (priceFilter === 'under3') return l.price < 3
+    if (priceFilter === 'mid') return l.price >= 3 && l.price <= 5
+    if (priceFilter === 'over5') return l.price > 5
     return true
   })
 
@@ -79,6 +86,7 @@ export default function SearchPage({ nav, savedListings, toggleSave, locale, set
             <input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t('searchPlaceholder')}
               style={{
                 flex: 1,
                 fontSize: 14,
@@ -139,12 +147,10 @@ export default function SearchPage({ nav, savedListings, toggleSave, locale, set
 
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '24px' }}>
         {loadState === 'loading' && (
-          <p style={{ color: '#6b7280', textAlign: 'center', padding: '48px 0' }}>Loading spots…</p>
+          <p style={{ color: '#6b7280', textAlign: 'center', padding: '48px 0' }}>{t('searchLoadingSpots')}</p>
         )}
         {loadState === 'error' && (
-          <p style={{ color: '#b91c1c', textAlign: 'center', padding: '48px 0' }}>
-            Could not load listings. Is the dev server running?
-          </p>
+          <p style={{ color: '#b91c1c', textAlign: 'center', padding: '48px 0' }}>{t('searchLoadError')}</p>
         )}
         {loadState === 'ok' && (
           <>
@@ -167,14 +173,15 @@ export default function SearchPage({ nav, savedListings, toggleSave, locale, set
                 </p>
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                {['All', '< $3/hr', '$3–$5/hr', '$5+/hr'].map((f) => (
+                {PRICE_FILTERS.map(({ id, labelKey }) => (
                   <button
-                    key={f}
-                    onClick={() => setPriceFilter(f)}
+                    key={id}
+                    type="button"
+                    onClick={() => setPriceFilter(id)}
                     style={{
-                      background: priceFilter === f ? green : 'white',
-                      color: priceFilter === f ? 'white' : '#374151',
-                      border: `1px solid ${priceFilter === f ? green : '#e5e7eb'}`,
+                      background: priceFilter === id ? green : 'white',
+                      color: priceFilter === id ? 'white' : '#374151',
+                      border: `1px solid ${priceFilter === id ? green : '#e5e7eb'}`,
                       cursor: 'pointer',
                       padding: '6px 14px',
                       borderRadius: 20,
@@ -183,7 +190,7 @@ export default function SearchPage({ nav, savedListings, toggleSave, locale, set
                       fontFamily: "'Plus Jakarta Sans', sans-serif",
                     }}
                   >
-                    {f}
+                    {t(labelKey)}
                   </button>
                 ))}
               </div>
@@ -199,10 +206,9 @@ export default function SearchPage({ nav, savedListings, toggleSave, locale, set
                   borderRadius: 16,
                 }}
               >
-                <p style={{ fontWeight: 600, color: '#111', marginBottom: 8 }}>No parking spots yet</p>
+                <p style={{ fontWeight: 600, color: '#111', marginBottom: 8 }}>{t('searchNoSpotsTitle')}</p>
                 <p style={{ color: '#6b7280', fontSize: 14, maxWidth: 400, margin: '0 auto' }}>
-                  Listings appear here when hosts add them. If you are a host, use “List Your Space” to create a
-                  listing.
+                  {t('searchNoSpotsBody')}
                 </p>
               </div>
             ) : viewMode === 'list' ? (
@@ -220,6 +226,7 @@ export default function SearchPage({ nav, savedListings, toggleSave, locale, set
                     onClick={(listing) => nav('listing', listing)}
                     savedListings={savedListings}
                     toggleSave={toggleSave}
+                    t={t}
                   />
                 ))}
               </div>
@@ -237,9 +244,9 @@ export default function SearchPage({ nav, savedListings, toggleSave, locale, set
                 }}
               >
                 <Map size={48} color={green} style={{ marginBottom: 12 }} />
-                <p style={{ color: green, fontWeight: 600, fontSize: 16 }}>Interactive Map View</p>
+                <p style={{ color: green, fontWeight: 600, fontSize: 16 }}>{t('mapViewTitle')}</p>
                 <p style={{ color: '#6b7280', fontSize: 13, marginTop: 4 }}>
-                  {filtered.length} spots pinned near campus
+                  {t('mapSpotsPinned', { count: filtered.length })}
                 </p>
                 <div
                   style={{
